@@ -8,7 +8,7 @@ const CourseRouter  = require('./routes/courseRoute')
 const app = express()
 // Connect to the database 
 
-mongoose.connect('mongodb+srv://abhishekmaurya:abhishek123@coursesellingapp.kqvuq.mongodb.net/CourseSelling')
+mongoose.connect('')
 .then(()=>{
     console.log("database connected")
 }).catch(err=>{
