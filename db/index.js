@@ -9,10 +9,11 @@ const user = new Schema({
     password:String,
 
     // Here declearing the reference of the course that the user purchased
-    purchased_course:{
+    // it will be the array of purchasedCourse because there could be more than one courses use can buy
+    purchased_course:[{
         type: Schema.Types.ObjectId,
         ref:'course'
-    },
+    }],
 })
 
 

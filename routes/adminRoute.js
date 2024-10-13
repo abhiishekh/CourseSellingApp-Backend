@@ -1,5 +1,5 @@
 const express = require('express');
-const {  AdminModule, CourseModule } = require('../db');
+const {  AdminModule, CourseModule, UserModule } = require('../db');
 const adminMiddleware = require('../middleware/adminMiddleware');
 
 const app = express()
@@ -83,9 +83,13 @@ router.post('/publish-course/:courseId',adminMiddleware,async function(req,res){
                     message:"course not found with the give courseId"
                 })
             }
-            const response = await CourseModule.updateOne({
-                isPublished:true
-            })
+            await CourseModule.updateOne({
+                    _id:courseId
+            },{isPublished:true}
+        )
+        const response = await CourseModule.findOne({
+            _id : courseId
+        })
             res.json({
                 message:"Course published",
                 response
@@ -95,6 +99,13 @@ router.post('/publish-course/:courseId',adminMiddleware,async function(req,res){
                 error
             })
         }
+})
+router.get('/users',adminMiddleware,async function(req,res){
+    const response =await UserModule.find()
+    res.json({
+        response
+    })
+
 })
 
 
