@@ -14,11 +14,13 @@ router.post('/signup',async function(req,res){
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
+    const isCreator= req.body.isCreator
     try {
         const response = await UserModule.create({
             username,
             email,
-            password
+            password,
+            isCreator
         })
 
         if(!response || response.length === 0){
@@ -60,7 +62,7 @@ router.post('/signin',async function(req,res){
         const token = jwt.sign({id:response._id},JWT_SECRET)
 
         res.json({
-            response,
+            isCreator:response.isCreator,
             token
         })
     } catch (err) {
@@ -118,22 +120,31 @@ router.get('/all-courses',async function(req,res){
         
     }
 })
-router.get('/my-courses',async function(req,res){
+router.get('/my-courses',userMiddleware,async function(req,res){
     try {
         // const username = req.headers.username;
         // trting to access the user with the user_id
         const token = req.headers.token;
         const verifiedData = jwt.verify(token,JWT_SECRET)
-        console.log(verifiedData)
-        const username = "harkirat"
+        const userId = verifiedData.id
+        
         const response = await UserModule.findOne({
-            username:username
+            _id:userId
         })
+        if(!response){
+            console.log("user not found with the id")
+        }
         const courseid = response.purchased_course
-       
+
         const arr = await CourseModule.find({
             _id:courseid
         })
+        if(arr.length === 0){
+            return res.json({
+                message:"No Purchase yet"
+            })
+
+        }
         
         res.json({
             arr

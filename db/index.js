@@ -7,6 +7,7 @@ const user = new Schema({
     username:String,
     email:String,
     password:String,
+    isCreator:Boolean,
 
     // Here declearing the reference of the course that the user purchased
     // it will be the array of purchasedCourse because there could be more than one courses use can buy

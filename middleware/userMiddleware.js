@@ -3,11 +3,11 @@ const express = require('express')
 
 async function userMiddleware(req,res,next){
     try {
-        const username = req.headers.username;
+        const userId = req.headers.token;
         
-        if(!username){
+        if(!userId){
             return res.json({
-                message:"please give the username in headers"
+                message:"please give the token in headers"
             })
         }
         next()
