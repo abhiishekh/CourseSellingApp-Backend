@@ -9,6 +9,13 @@ const user = new Schema({
     password:String,
     isCreator:Boolean,
 
+    // declearation for is Created_courses
+
+    created_courses:[{
+        type: Schema.Types.ObjectId,
+        ref:'course'
+    }],
+
     // Here declearing the reference of the course that the user purchased
     // it will be the array of purchasedCourse because there could be more than one courses use can buy
     purchased_course:[{

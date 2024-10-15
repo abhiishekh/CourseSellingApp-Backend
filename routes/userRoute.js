@@ -97,7 +97,7 @@ router.get('/all-courses',async function(req,res){
     }
 })
 // router.post('/purchase/:courseid',userMiddleware,async function(req,res){
-    router.post('/purchase',async function(req,res){
+router.post('/purchase',async function(req,res){
     try {
         // const courseId = req.params.courseid;
         // const username = req.headers.username;
