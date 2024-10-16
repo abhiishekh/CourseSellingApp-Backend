@@ -157,9 +157,12 @@ router.get('/tutor-courses/:id', async function(req,res){
             })
         }
         const result = response.created_courses
+        const data = await CourseModule.find({
+            _id:result
+        })
 
         res.json({
-            result
+            data
         })
 
     } catch (error) {

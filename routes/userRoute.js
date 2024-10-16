@@ -184,6 +184,5 @@ router.get('/my-courses',userMiddleware,async function(req,res){
         })
     }
 })
-router.get('/created-courses')
 
 module.exports = router
