@@ -1,6 +1,7 @@
 const express = require('express');
 const {  AdminModule, CourseModule, UserModule } = require('../db');
 const adminMiddleware = require('../middleware/adminMiddleware');
+const userMiddleware = require('../middleware/userMiddleware');
 
 const app = express()
 app.use(express.json());
@@ -106,6 +107,64 @@ router.get('/users',adminMiddleware,async function(req,res){
         response
     })
 
+})
+router.get('/user',async function(req,res){
+    const userId = req.headers.tutorid
+    // console.log(req.headers.tutorid)
+    // console.log(userId)
+    const response = await UserModule.findOne({
+        _id:userId
+    })
+    if(!response){
+        return res.json({
+            message:"user not found"
+        })
+    }
+    // console.log(response)
+    res.json({
+        response
+    })
+})
+router.get('/tutors',async function(req,res){
+    const response = await UserModule.find({
+        isCreator:true
+    })
+    if(response.length <= 0){
+        return res.json({
+            message :"no tutor yet"
+        })
+    }
+    res.json({
+        response
+    })
+})
+router.get('/tutor-courses/:id', async function(req,res){
+    const tutorId = req.params.id
+
+    try {
+        if(!tutorId){
+            return res.json({
+                message:"please give tutor id"
+            })
+        }
+
+        const response = await UserModule.findOne({
+            _id:tutorId
+        })
+        if(!response){
+            return res.json({
+                message:"tutor not found"
+            })
+        }
+        const result = response.created_courses
+
+        res.json({
+            result
+        })
+
+    } catch (error) {
+        
+    }
 })
 
 

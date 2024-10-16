@@ -36,7 +36,8 @@ const course = new Schema({
     title:String,
     description:String,
     price:Number,
-    isPublished:Boolean
+    isPublished:Boolean,
+    isFeatured:Boolean
 })
 
 

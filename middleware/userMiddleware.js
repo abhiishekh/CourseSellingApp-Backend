@@ -1,15 +1,18 @@
 const express = require('express')
-
+const jwt = require('jsonwebtoken')
+const JWT_SECRET = "ilovecoding"
 
 async function userMiddleware(req,res,next){
     try {
-        const userId = req.headers.token;
-        
-        if(!userId){
+        const token = req.headers.token;
+       
+        if(!token){
             return res.json({
-                message:"please give the token in headers"
+                message:"Please signin first"
             })
         }
+        const decodedToken  = jwt.verify(token,JWT_SECRET)
+        req._id = decodedToken.id
         next()
     } catch (error) {
         res.json({

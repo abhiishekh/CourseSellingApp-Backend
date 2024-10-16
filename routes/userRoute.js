@@ -1,7 +1,8 @@
 const express = require('express');
 const { UserModule, CourseModule } = require('../db');
 const userMiddleware = require('../middleware/userMiddleware');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const hasPurchased = require('../middleware/hasPurchased');
 const JWT_SECRET = "ilovecoding"
 
 const app = express()
@@ -96,15 +97,43 @@ router.get('/all-courses',async function(req,res){
         })
     }
 })
-// router.post('/purchase/:courseid',userMiddleware,async function(req,res){
-router.post('/purchase',async function(req,res){
+router.get('/featured-courses',async function(req,res){
     try {
-        // const courseId = req.params.courseid;
-        // const username = req.headers.username;
-        const courseId = '6704ea5c6785bcb865b983f2';
-        const username = "harkirat";
+        const response = await CourseModule.find({
+            isFeatured:true,
+        })
+
+        // console.log(response)
+        if(!response || response.length === 0){
+            return res.json({
+                message:"no featured courses"
+            })
+        }
+
+        res.json({
+            response
+        })
+
+    } catch (err) {
+        res.json({
+            err
+        })
+    }
+})
+// router.post('/purchase/:courseid',userMiddleware,async function(req,res){
+router.post('/purchase/:id',hasPurchased, async function(req,res){
+    const courseId = req.params.id
+    const token = req.headers.token
+
+
+
+    const decodeduser = jwt.verify(token,JWT_SECRET);
+    const userId = decodeduser.id
+
+    try {
+
         await UserModule.updateOne({
-            username:username,
+            _id:userId,
             
         },{
             "$push":{
@@ -155,5 +184,6 @@ router.get('/my-courses',userMiddleware,async function(req,res){
         })
     }
 })
+router.get('/created-courses')
 
 module.exports = router

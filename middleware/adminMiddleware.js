@@ -2,16 +2,15 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = "ilovecoding"
 
-async function adminMiddleware(req,res,next){
+function adminMiddleware(req,res,next){
     try {
         const token = req.headers.token;
        
         if(!token){
             return res.json({
-                message:"please give the token in headers"
+                message:"Please signin first"
             })
         }
-        console.log(token)
         const decodedToken  = jwt.verify(token,JWT_SECRET)
         req._id = decodedToken.id
         next()
