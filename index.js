@@ -24,12 +24,15 @@ mongoose.connect(MONGO_URL)
 //middleware for parse the json
 app.use(express.json())
 //allowing the origin to access data
-app.use(cors())
+app.use(cors({origin:['http://localhost:5173','https://test-deployment-6tln.vercel.app']}));
 
 
 // routes
+// app.get('/',function(req,res){
+//     res.sendFile(path.join(__dirname, '/public/index.html'));
+// })
 app.get('/',function(req,res){
-    res.sendFile(path.join(__dirname, '/public/index.html'));
+    res.send("Backend is working")
 })
 app.use('/api/v1',UserRouter)
 app.use('/api/v1',AdminRouter)
