@@ -24,7 +24,7 @@ mongoose.connect(MONGO_URL)
 //middleware for parse the json
 app.use(express.json())
 //allowing the origin to access data
-app.use(cors({origin:['http://localhost:5173','']}));
+app.use(cors({origin:['http://localhost:5173','https://course-selling-app-frontend-ten.vercel.app/']}));
 
 
 // routes
