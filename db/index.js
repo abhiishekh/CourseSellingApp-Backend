@@ -5,7 +5,10 @@ const ObjectId = mongoose.ObjectId;
 
 const user = new Schema({
     username:String,
-    email:String,
+    email:{
+        type:String,
+        unique:true
+    },
     password:String,
     isCreator:Boolean,
 
