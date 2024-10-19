@@ -3,7 +3,8 @@ const { UserModule, CourseModule } = require('../db');
 const userMiddleware = require('../middleware/userMiddleware');
 const jwt = require('jsonwebtoken');
 const hasPurchased = require('../middleware/hasPurchased');
-const JWT_SECRET = "ilovecoding"
+require('dotenv').config()
+const JWT_SECRET = 'ilovecoding'
 
 const app = express()
 app.use(express.json());
@@ -17,6 +18,17 @@ router.post('/signup',async function(req,res){
     const password = req.body.password;
     const isCreator= req.body.isCreator
     try {
+
+        const checkuser = await UserModule.findOne({
+            email:email
+        })
+
+        if(checkuser){
+            return res.json({
+                error:"User Allready exist"
+            })
+        }
+
         const response = await UserModule.create({
             username,
             email,
@@ -36,7 +48,7 @@ router.post('/signup',async function(req,res){
         
     } catch (error) {
         res.json({
-            err
+            error
         })
         console.log(error)
     }
@@ -49,16 +61,20 @@ router.post('/signin',async function(req,res){
         const response = await UserModule.findOne({
             email:email
         })
-        if(!response || response.length === 0){
+        if(!response ){
             return res.status(404).json({
-                message:"user not found with the credentials"
+                message:"user not found with provided credentials"
             })
         }
+
+        console.log("user found" + response.username)
         if(password !== response.password){
             return res.status(401).json({
-                message:"invalid credentials"
+                message:"Wrong email or password"
             })
         }
+
+        console.log("password matched")
         //creating jwt token
         const token = jwt.sign({id:response._id},JWT_SECRET)
 
@@ -67,6 +83,7 @@ router.post('/signin',async function(req,res){
             token
         })
     } catch (err) {
+        console.log("error occured")
         res.json({
             err
         })
