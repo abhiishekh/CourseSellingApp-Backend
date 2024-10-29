@@ -2,7 +2,9 @@ const express = require('express');
 const { UserModule, CourseModule } = require('../db');
 const userMiddleware = require('../middleware/userMiddleware');
 const jwt = require('jsonwebtoken');
+const auth = require('../middleware/auth')
 const hasPurchased = require('../middleware/hasPurchased');
+const bycript = require('bcrypt')
 require('dotenv').config()
 const JWT_SECRET = 'ilovecoding'
 
@@ -16,24 +18,22 @@ router.post('/signup',async function(req,res){
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
-    const isCreator= req.body.isCreator
     try {
-
         const checkuser = await UserModule.findOne({
             email:email
         })
 
         if(checkuser){
             return res.json({
-                error:"User Allready exist"
+                message:"User Allready exist"
             })
         }
+        const hashedPassword = await bycript.hash(password,15)
 
         const response = await UserModule.create({
             username,
             email,
-            password,
-            isCreator
+            password:hashedPassword,
         })
 
         if(!response || response.length === 0){
@@ -41,9 +41,10 @@ router.post('/signup',async function(req,res){
                 message:"please enter the credentials"
             })
         }
+        const token = jwt.sign({id:response._id},JWT_SECRET,{expiresIn:'1D'})
         res.json({
             message:"User created Successfully",
-            response
+            token
         })
         
     } catch (error) {
@@ -67,19 +68,21 @@ router.post('/signin',async function(req,res){
             })
         }
 
-        console.log("user found" + response.username)
-        if(password !== response.password){
+        // console.log("user found " + response.password)
+        const veryfiedPassword = await bycript.compare(password, response.password)
+        // console.log(veryfiedPassword)
+        if(!veryfiedPassword){
             return res.status(401).json({
                 message:"Wrong email or password"
             })
         }
 
-        console.log("password matched")
-        //creating jwt token
-        const token = jwt.sign({id:response._id},JWT_SECRET)
+        // console.log("password matched")
+
+        const token = jwt.sign({id:response._id},JWT_SECRET,{expiresIn:'1D'})
 
         res.json({
-            isCreator:response.isCreator,
+            message:"User Signed in",
             token
         })
     } catch (err) {
@@ -114,6 +117,7 @@ router.get('/all-courses',async function(req,res){
         })
     }
 })
+
 router.get('/featured-courses',async function(req,res){
     try {
         const response = await CourseModule.find({
@@ -138,11 +142,9 @@ router.get('/featured-courses',async function(req,res){
     }
 })
 // router.post('/purchase/:courseid',userMiddleware,async function(req,res){
-router.post('/purchase/:id',hasPurchased, async function(req,res){
+router.post('/purchase/:id',auth,hasPurchased, async function(req,res){
     const courseId = req.params.id
     const token = req.headers.token
-
-
 
     const decodeduser = jwt.verify(token,JWT_SECRET);
     const userId = decodeduser.id
@@ -167,9 +169,9 @@ router.post('/purchase/:id',hasPurchased, async function(req,res){
     }
 })
 router.get('/my-courses',userMiddleware,async function(req,res){
+    
     try {
-        // const username = req.headers.username;
-        // trting to access the user with the user_id
+
         const token = req.headers.token;
         const verifiedData = jwt.verify(token,JWT_SECRET)
         const userId = verifiedData.id

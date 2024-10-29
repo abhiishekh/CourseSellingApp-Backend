@@ -4,7 +4,8 @@ const mongoose = require('mongoose')
 const UserRouter = require('./routes/userRoute')
 const AdminRouter= require('./routes/adminRoute')
 const CourseRouter  = require('./routes/courseRoute')
-const path = require('path')
+const TutorRouter = require('./routes/tutorRoute')
+const path = require('path');
 require('dotenv').config()
 
 const MONGO_URL = process.env.MONGO_URL
@@ -24,19 +25,15 @@ mongoose.connect(MONGO_URL)
 //middleware for parse the json
 app.use(express.json())
 //allowing the origin to access data
-app.use(cors({origin:['http://localhost:5173','https://course-selling-app-frontend-ten.vercel.app']}));
+app.use(cors({origin:['http://localhost:5173','https://100xdevs-rosy.vercel.app']}));
 
-
-// routes
-// app.get('/',function(req,res){
-//     res.sendFile(path.join(__dirname, '/public/index.html'));
-// })
 app.get('/',function(req,res){
     res.send("Backend is working")
 })
 app.use('/api/v1',UserRouter)
 app.use('/api/v1',AdminRouter)
 app.use('/api/v1',CourseRouter)
+app.use('/api/v1',TutorRouter)
 
 
 
