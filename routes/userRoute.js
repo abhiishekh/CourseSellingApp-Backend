@@ -203,5 +203,32 @@ router.get('/my-courses',userMiddleware,async function(req,res){
         })
     }
 })
+router.post('/search',async function(req,res){
+    const {title} = req.body;
+    try {
+        const regex = new RegExp(title, 'i');
+
+        const response = await CourseModule.find({
+            title: { $regex: regex } 
+        });
+    
+        if(!response){
+            return res.json({
+                message:"no Search result found"
+            })
+        }
+        res.json({
+            response
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            message:"error found",
+
+            error:error.message
+        })   
+    }
+
+})
 
 module.exports = router
