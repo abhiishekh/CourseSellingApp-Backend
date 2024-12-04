@@ -28,7 +28,7 @@ router.post('/signup',async function(req,res){
                 message:"User Allready exist"
             })
         }
-        const hashedPassword = await bycript.hash(password,15)
+        const hashedPassword = await bycript.hash(password,5)
 
         const response = await UserModule.create({
             username,
@@ -41,7 +41,7 @@ router.post('/signup',async function(req,res){
                 message:"please enter the credentials"
             })
         }
-        const token = jwt.sign({id:response._id},JWT_SECRET,{expiresIn:'1D'})
+        const token = jwt.sign({id:response._id},JWT_SECRET,{expiresIn:'1d'})
         res.json({
             message:"User created Successfully",
             token
@@ -79,7 +79,7 @@ router.post('/signin',async function(req,res){
 
         // console.log("password matched")
 
-        const token = jwt.sign({id:response._id},JWT_SECRET,{expiresIn:'1D'})
+        const token = jwt.sign({id:response._id},JWT_SECRET,{expiresIn:'1d'})
 
         res.json({
             message:"User Signed in",
